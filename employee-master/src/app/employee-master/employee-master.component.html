@@ -1,236 +1,99 @@
+<!-- employee-master.component.html -->
 <div class="container">
-  <h2>Employee Master</h2>
-
   <!-- Header Buttons -->
   <div class="header-buttons">
-    <button (click)="onSubmit()" [disabled]="employeeForm.invalid" title="Save employee details">Save</button>
-    <button (click)="onCancel()" title="Cancel and clear form">Cancel</button>
-    <button (click)="onEdit()" [disabled]="currentEmployeeIndex === null" title="Edit selected employee">Edit</button>
-    <button (click)="onDelete()" [disabled]="currentEmployeeIndex === null" title="Delete selected employee">Delete</button>
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search by ID, Name, Department" title="Enter ID, name or department to search" />
+    <button (click)="onNew()">New</button>
+    <button [disabled]="!selectedEmployee" (click)="onEdit()">Edit</button>
+    <button [disabled]="!selectedEmployee" (click)="onDelete()">Delete</button>
+    <button (click)="onSave()">Save</button>
+    <button (click)="onCancel()">Cancel</button>
+    <button [disabled]="!selectedEmployee" (click)="onView()">View</button>
   </div>
 
-  <!-- Tabs -->
-  <ul class="tabs">
-    <li [class.active]="selectedTab === 'personal'" (click)="changeTab('personal')">Personal</li>
-    <li [class.active]="selectedTab === 'employment'" (click)="changeTab('employment')">Employment</li>
-    <li [class.active]="selectedTab === 'compensation'" (click)="changeTab('compensation')">Compensation</li>
-    <li [class.active]="selectedTab === 'address'" (click)="changeTab('address')">Address</li>
-    <li [class.active]="selectedTab === 'other'" (click)="changeTab('other')">Other Info</li>
-  </ul>
+  <!-- Search Section (Reactive) -->
+  <form [formGroup]="searchForm" class="search-section">
+    <input formControlName="searchId" placeholder="Search by ID" title="Search by Employee ID" />
+    <input formControlName="searchName" placeholder="Search by Name" title="Search by Employee Name" />
 
-  <!-- Form -->
-  <form [formGroup]="employeeForm">
-    <!-- Personal -->
-    <div *ngIf="selectedTab === 'personal'">
-      <label>Employee ID</label>
-      <input formControlName="employeeId" placeholder="Enter employee ID" title="Unique employee ID" />
-      <div class="error" *ngIf="employeeForm.get('employeeId')?.invalid && (employeeForm.get('employeeId')?.touched || employeeForm.get('employeeId')?.dirty)">
-        Employee ID is required.
-      </div>
+    <select formControlName="searchDepartment" title="Search by Department">
+      <option value="">All Departments</option>
+      <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+    </select>
 
-      <label>First Name</label>
-      <input formControlName="firstName" placeholder="Enter first name" title="Employee's first name" />
-      <div class="error" *ngIf="employeeForm.get('firstName')?.invalid && (employeeForm.get('firstName')?.touched || employeeForm.get('firstName')?.dirty)">
-        First name is required.
-      </div>
-
-      <label>Last Name</label>
-      <input formControlName="lastName" placeholder="Enter last name" title="Employee's last name" />
-
-      <label>Email</label>
-      <input type="email" formControlName="email" placeholder="example@email.com" title="Valid email address" />
-      <div class="error" *ngIf="employeeForm.get('email')?.invalid && (employeeForm.get('email')?.touched || employeeForm.get('email')?.dirty)">
-        Enter a valid email address.
-      </div>
-
-      <label>Phone</label>
-      <input formControlName="phone" placeholder="10-digit phone number" title="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]*" inputmode="numeric" />
-      <div class="error" *ngIf="employeeForm.get('phone')?.invalid && (employeeForm.get('phone')?.touched || employeeForm.get('phone')?.dirty)">
-        Enter a valid 10-digit phone number.
-      </div>
-    </div>
-
-    <!-- Employment -->
-    <div *ngIf="selectedTab === 'employment'">
-      <label>Department</label>
-      <select formControlName="department" title="Select department">
-        <option value="">Select</option>
-        <option value="IT">IT</option>
-        <option value="HR">HR</option>
-        <option value="Finance">Finance</option>
-      </select>
-
-      <label>Job Title</label>
-      <select formControlName="jobTitle" title="Select job title">
-        <option value="">Select</option>
-        <option value="Developer">Developer</option>
-        <option value="Tester">Tester</option>
-        <option value="Manager">Manager</option>
-      </select>
-
-      <label>Employment Type</label>
-      <select formControlName="employmentType" title="Select employment type">
-        <option value="">Select</option>
-        <option value="Full-time">Full-time</option>
-        <option value="Part-time">Part-time</option>
-        <option value="Contract">Contract</option>
-      </select>
-
-      <label>Hire Date</label>
-      <input formControlName="hireDate" type="date" title="Date of joining" />
-
-      <label>Status</label>
-      <select formControlName="employeeStatus" title="Select employment status">
-        <option value="">Select</option>
-        <option value="Active">Active</option>
-        <option value="On Leave">On Leave</option>
-        <option value="Resigned">Resigned</option>
-      </select>
-
-      <label>Supervisor</label>
-      <input formControlName="supervisor" placeholder="Supervisor name" title="Employee's supervisor name" />
-    </div>
-
-    <!-- Compensation -->
-    <div *ngIf="selectedTab === 'compensation'">
-      <label>Salary</label>
-      <input type="number" formControlName="salary" placeholder="Enter salary amount" title="Monthly salary" />
-
-      <label>Pay Frequency</label>
-      <select formControlName="payFrequency" title="Salary frequency">
-        <option value="">Select</option>
-        <option value="Monthly">Monthly</option>
-        <option value="Bi-weekly">Bi-weekly</option>
-      </select>
-
-      <label>Bank Details</label>
-      <input formControlName="bankDetails" placeholder="A/C No, IFSC" title="Bank account info" />
-    </div>
-
-    <!-- Address -->
-    <div *ngIf="selectedTab === 'address'">
-      <label>Address 1</label>
-      <input formControlName="address1" placeholder="Street, House No." title="Primary address" />
-
-      <label>Address 2</label>
-      <input formControlName="address2" placeholder="Landmark" title="Additional address details" />
-
-      <label>City</label>
-      <input formControlName="city" placeholder="City name" title="City" />
-
-      <label>State</label>
-      <input formControlName="state" placeholder="State" title="State" />
-
-      <label>Postal Code</label>
-      <input formControlName="postalCode" placeholder="ZIP or Postal Code" title="Postal code" />
-
-      <label>Country</label>
-      <input formControlName="country" placeholder="Country" title="Country" />
-    </div>
-
-    <!-- Other Info -->
-    <div *ngIf="selectedTab === 'other'">
-      <label>Emergency Contact</label>
-      <input formControlName="emergencyContact" placeholder="Name & Phone" title="Emergency contact person" />
-
-      <label>Notes</label>
-      <textarea formControlName="notes" placeholder="Any extra notes" title="Optional notes or remarks"></textarea>
-    </div>
+    <select formControlName="searchStatus" title="Search by Status">
+      <option value="">All Status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+    </select>
   </form>
 
-  <!-- Employee Table with Checkbox -->
+  <!-- Employee Form Section -->
+  <form [formGroup]="employeeForm" class="form-section">
+    <input formControlName="employeeId" placeholder="Employee ID" />
+    <input formControlName="firstName" placeholder="First Name" />
+    <input formControlName="lastName" placeholder="Last Name" />
+    <input formControlName="email" placeholder="Email" type="email" />
+    <input formControlName="phone" placeholder="Phone Number" type="tel" />
+
+    <select formControlName="department">
+      <option value="">Select Department</option>
+      <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+    </select>
+
+    <select formControlName="jobTitle">
+      <option value="">Select Job Title</option>
+      <option *ngFor="let title of jobTitles" [value]="title">{{ title }}</option>
+    </select>
+
+    <select formControlName="employmentType">
+      <option value="">Select Employment Type</option>
+      <option *ngFor="let type of employmentTypes" [value]="type">{{ type }}</option>
+    </select>
+
+    <select formControlName="employeeStatus">
+      <option value="">Select Status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+    </select>
+
+    <input formControlName="hireDate" type="date" />
+  </form>
+
+  <!-- Employee Table -->
   <table>
     <thead>
       <tr>
         <th>Select</th>
-        <th>ID</th>
+        <th>Employee ID</th>
         <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
+        <th>Department</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let emp of filteredEmployees; let i = index" [class.selected]="i === currentEmployeeIndex">
-        <td>
-          <input
-            type="checkbox"
-            [checked]="i === currentEmployeeIndex"
-            (change)="toggleSelection(i)"
-            title="Select employee to edit/view/delete"
-          />
-        </td>
+      <tr
+        *ngFor="let emp of filteredEmployees"
+        [class.selected]="selectedEmployee === emp"
+        (click)="onSelect(emp)"
+      >
+        <td><input type="checkbox" [checked]="selectedEmployee === emp" /></td>
         <td>{{ emp.employeeId }}</td>
         <td>{{ emp.firstName }} {{ emp.lastName }}</td>
-        <td>{{ emp.email }}</td>
-        <td>{{ emp.phone }}</td>
+        <td>{{ emp.department }}</td>
+        <td>{{ emp.employeeStatus }}</td>
       </tr>
     </tbody>
   </table>
 </div>
 
-<!-- Styles -->
-<style>
-  .container {
-    padding: 20px;
-    font-family: Arial;
-  }
-
-  .header-buttons {
-    margin-bottom: 15px;
-  }
-
-  .header-buttons button {
-    margin-right: 10px;
-  }
-
-  .tabs {
-    list-style: none;
-    display: flex;
-    padding: 0;
-    margin-bottom: 10px;
-  }
-
-  .tabs li {
-    margin-right: 10px;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-  }
-
-  .tabs li.active {
-    background-color: #007bff;
-    color: white;
-  }
-
-  input,
-  select,
-  textarea {
-    display: block;
-    margin-bottom: 10px;
-    padding: 6px;
-    width: 300px;
-  }
-
-  table {
-    margin-top: 20px;
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  table th,
-  table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-  }
-
-  tr.selected {
-    background-color: #e0f7fa;
-  }
-
-  .error {
-    color: red;
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-</style>
+<!-- View Popup -->
+<div *ngIf="showViewPopup" class="popup">
+  <div class="popup-content">
+    <h3>Employee Details</h3>
+    <p><strong>ID:</strong> {{ selectedEmployee?.employeeId }}</p>
+    <p><strong>Name:</strong> {{ selectedEmployee?.firstName }} {{ selectedEmployee?.lastName }}</p>
+    <p><strong>Email:</strong> {{ selectedEmployee?.email }}</p>
+    <p><strong>Phone:</strong> {{ selectedEmployee?.phone }}</p>
+    <p><strong>Department:</strong> {{ selectedEmployee?.department }}</p>
+    <p><strong>Status:</strong> {{ selectedEmployee?.employeeStatus }}</p>
+    <button (click)="closePopup()">Close</button>
+  </div>
+</div>

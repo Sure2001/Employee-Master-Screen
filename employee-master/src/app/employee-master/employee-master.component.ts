@@ -1,147 +1,155 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { EmployeeService } from '../employee.service';
+
+interface Employee {
+  _id?: string;
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  department: string;
+  jobTitle: string;
+  employmentType: string;
+  employeeStatus: string;
+  hireDate: string;
+}
 
 @Component({
   selector: 'app-employee-master',
   templateUrl: './employee-master.component.html',
   styleUrls: ['./employee-master.component.css']
 })
-export class EmployeeMasterComponent {
-  employeeForm: FormGroup;
-  selectedTab: string = 'personal';
-  employees: any[] = [];
-  currentEmployeeIndex: number | null = null;
-  selectedIndices: number[] = [];
-  isEditMode = false;
-  searchTerm = '';
+export class EmployeeMasterComponent implements OnInit {
+  employeeForm!: FormGroup;
+  searchForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private snackBar: MatSnackBar) {
+  employees: Employee[] = [];
+  filteredEmployees: Employee[] = [];
+  selectedEmployee: Employee | null = null;
+  showViewPopup = false;
+
+  departments = ['HR', 'IT', 'Finance', 'Marketing'];
+  jobTitles = ['Manager', 'Developer', 'Analyst', 'Designer'];
+  employmentTypes = ['Full-Time', 'Part-Time', 'Contract'];
+  statuses = ['Active', 'Inactive'];
+
+  constructor(private fb: FormBuilder, private employeeService: EmployeeService) {}
+
+  ngOnInit(): void {
+    this.initForms();
+    this.getAllEmployees();
+
+    // Live filter on search field changes
+    this.searchForm.valueChanges.subscribe(() => this.applyFilters());
+  }
+
+  initForms(): void {
     this.employeeForm = this.fb.group({
       employeeId: ['', Validators.required],
       firstName: ['', Validators.required],
-      lastName: [''],
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       department: ['', Validators.required],
-      jobTitle: [''],
-      employmentType: [''],
-      hireDate: [''],
-      employeeStatus: [''],
-      supervisor: [''],
-      salary: [''],
-      payFrequency: [''],
-      bankDetails: [''],
-      address1: [''],
-      address2: [''],
-      city: [''],
-      state: [''],
-      postalCode: [''],
-      country: [''],
-      emergencyContact: [''],
-      notes: ['']
+      jobTitle: ['', Validators.required],
+      employmentType: ['', Validators.required],
+      employeeStatus: ['', Validators.required],
+      hireDate: ['', Validators.required]
+    });
+
+    this.searchForm = this.fb.group({
+      searchId: [''],
+      searchName: [''],
+      searchDepartment: [''],
+      searchStatus: ['']
     });
   }
 
-  showMessage(msg: string) {
-    this.snackBar.open(msg, 'Close', { duration: 3000 });
+  getAllEmployees(): void {
+    this.employeeService.getEmployees().subscribe((data: Employee[]) => {
+      this.employees = data;
+      this.applyFilters();
+    });
   }
 
-  allowOnlyNumbers(event: KeyboardEvent) {
-    const pattern = /[0-9]/;
-    const inputChar = String.fromCharCode(event.keyCode || event.which);
-    if (!pattern.test(inputChar)) {
-      event.preventDefault();
-    }
+  applyFilters(): void {
+    const { searchId, searchName, searchDepartment, searchStatus } = this.searchForm.value;
+
+    this.filteredEmployees = this.employees.filter(emp =>
+      (!searchId || emp.employeeId.toLowerCase().includes(searchId.toLowerCase())) &&
+      (!searchName || `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(searchName.toLowerCase())) &&
+      (!searchDepartment || emp.department === searchDepartment) &&
+      (!searchStatus || emp.employeeStatus === searchStatus)
+    );
   }
 
-  onSubmit(): void {
-    if (this.employeeForm.invalid) {
-      this.employeeForm.markAllAsTouched();
-      this.showMessage('Please fill all required fields correctly.');
-      return;
-    }
-
-    const data = this.employeeForm.value;
-    if (this.currentEmployeeIndex === null) {
-      this.employees.push(data);
-      this.showMessage('Employee saved successfully!');
-    } else {
-      this.employees[this.currentEmployeeIndex] = data;
-      this.showMessage('Employee updated successfully!');
-    }
-
-    this.resetForm();
+  onSelect(emp: Employee): void {
+    this.selectedEmployee = emp;
+    this.employeeForm.reset(); // Clear form before selecting
   }
 
-  resetForm(): void {
+  onNew(): void {
     this.employeeForm.reset();
-    this.currentEmployeeIndex = null;
-    this.isEditMode = false;
-    this.selectedTab = 'personal';
-    this.selectedIndices = [];
-  }
-
-  onCancel(): void {
-    this.resetForm();
-    this.showMessage('Changes canceled.');
+    this.selectedEmployee = null;
   }
 
   onEdit(): void {
-    if (this.currentEmployeeIndex !== null) {
-      const employee = this.employees[this.currentEmployeeIndex];
-      this.employeeForm.patchValue(employee);
-      this.isEditMode = true;
-      this.showMessage('Editing employee...');
+    if (this.selectedEmployee) {
+      this.employeeForm.patchValue(this.selectedEmployee);
+    }
+  }
+
+  onSave(): void {
+    if (this.employeeForm.invalid) {
+      alert('Please fill all required fields correctly.');
+      return;
+    }
+
+    const employeeData: Employee = this.employeeForm.value;
+
+    if (this.selectedEmployee && this.selectedEmployee._id) {
+      // Update
+      this.employeeService.updateEmployee(this.selectedEmployee._id, employeeData).subscribe(() => {
+        this.getAllEmployees();
+        this.resetFormState();
+      });
+    } else {
+      // Add New
+      this.employeeService.addEmployee(employeeData).subscribe(() => {
+        this.getAllEmployees();
+        this.resetFormState();
+      });
     }
   }
 
   onDelete(): void {
-    if (this.selectedIndices.length > 0) {
-      if (confirm('Are you sure you want to delete selected employee(s)?')) {
-        // Sort indices in reverse to avoid shifting while deleting
-        this.selectedIndices.sort((a, b) => b - a).forEach(index => {
-          this.employees.splice(index, 1);
-        });
-        this.resetForm();
-        this.showMessage('Selected employee(s) deleted.');
-      }
-    } else if (this.currentEmployeeIndex !== null) {
-      if (confirm('Are you sure you want to delete?')) {
-        this.employees.splice(this.currentEmployeeIndex, 1);
-        this.resetForm();
-        this.showMessage('Employee deleted.');
-      }
+    if (this.selectedEmployee && this.selectedEmployee._id && confirm('Are you sure you want to delete this employee?')) {
+      this.employeeService.deleteEmployee(this.selectedEmployee._id).subscribe(() => {
+        this.getAllEmployees();
+        this.resetFormState();
+      });
     }
   }
 
-  selectEmployee(index: number): void {
-    this.currentEmployeeIndex = index;
+  onCancel(): void {
+    this.resetFormState();
   }
 
-  toggleSelection(index: number): void {
-    const selected = this.selectedIndices.includes(index);
-    if (selected) {
-      this.selectedIndices = this.selectedIndices.filter(i => i !== index);
-    } else {
-      this.selectedIndices.push(index);
+  onView(): void {
+    if (this.selectedEmployee) {
+      this.showViewPopup = true;
     }
   }
 
-  changeTab(tab: string): void {
-    this.selectedTab = tab;
+  closePopup(): void {
+    this.showViewPopup = false;
   }
 
-  get filteredEmployees() {
-    const term = this.searchTerm.toLowerCase();
-    return this.employees.filter(emp =>
-      emp.employeeId?.toLowerCase().includes(term) ||
-      emp.firstName?.toLowerCase().includes(term) ||
-      emp.department?.toLowerCase().includes(term)
-    );
-  }
-
-  isSelected(index: number): boolean {
-    return this.selectedIndices.includes(index);
+  private resetFormState(): void {
+    this.employeeForm.reset();
+    this.selectedEmployee = null;
+    this.showViewPopup = false;
   }
 }

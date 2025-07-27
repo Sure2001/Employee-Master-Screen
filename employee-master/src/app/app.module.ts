@@ -1,11 +1,11 @@
+// src/app/app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms'; // ✅ Add FormsModule
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { EmployeeMasterComponent } from './employee-master/employee-master.component'; // adjust path if needed
+import { EmployeeMasterComponent } from './employee-master/employee-master.component';
 
 @NgModule({
   declarations: [
@@ -14,10 +14,9 @@ import { EmployeeMasterComponent } from './employee-master/employee-master.compo
   ],
   imports: [
     BrowserModule,
-    ReactiveFormsModule,
-    FormsModule,
-    BrowserAnimationsModule,    // ✅ Required for MatSnackBar animations
-    MatSnackBarModule           // ✅ Required for displaying snackbars
+    FormsModule,           // ✅ Needed for ngModel
+    ReactiveFormsModule,   // ✅ Needed for formGroup, formControlName
+    HttpClientModule       // ✅ Needed for service HttpClient
   ],
   providers: [],
   bootstrap: [AppComponent]
