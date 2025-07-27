@@ -1,115 +1,236 @@
 <div class="container">
   <h2>Employee Master</h2>
 
+  <!-- Header Buttons -->
+  <div class="header-buttons">
+    <button (click)="onSubmit()" [disabled]="employeeForm.invalid" title="Save employee details">Save</button>
+    <button (click)="onCancel()" title="Cancel and clear form">Cancel</button>
+    <button (click)="onEdit()" [disabled]="currentEmployeeIndex === null" title="Edit selected employee">Edit</button>
+    <button (click)="onDelete()" [disabled]="currentEmployeeIndex === null" title="Delete selected employee">Delete</button>
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search by ID, Name, Department" title="Enter ID, name or department to search" />
+  </div>
+
   <!-- Tabs -->
   <ul class="tabs">
-    <li [class.active]="selectedTab === 'personal'" (click)="changeTab('personal')">Personal Info</li>
+    <li [class.active]="selectedTab === 'personal'" (click)="changeTab('personal')">Personal</li>
     <li [class.active]="selectedTab === 'employment'" (click)="changeTab('employment')">Employment</li>
     <li [class.active]="selectedTab === 'compensation'" (click)="changeTab('compensation')">Compensation</li>
     <li [class.active]="selectedTab === 'address'" (click)="changeTab('address')">Address</li>
     <li [class.active]="selectedTab === 'other'" (click)="changeTab('other')">Other Info</li>
   </ul>
 
-  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+  <!-- Form -->
+  <form [formGroup]="employeeForm">
+    <!-- Personal -->
     <div *ngIf="selectedTab === 'personal'">
       <label>Employee ID</label>
-      <input type="text" formControlName="employeeId" placeholder="Enter ID" title="Unique Employee ID">
-      <div *ngIf="employeeForm.get('employeeId')?.touched && employeeForm.get('employeeId')?.invalid">Required</div>
+      <input formControlName="employeeId" placeholder="Enter employee ID" title="Unique employee ID" />
+      <div class="error" *ngIf="employeeForm.get('employeeId')?.invalid && (employeeForm.get('employeeId')?.touched || employeeForm.get('employeeId')?.dirty)">
+        Employee ID is required.
+      </div>
 
       <label>First Name</label>
-      <input type="text" formControlName="firstName" placeholder="Enter first name" title="Employee's first name">
-      <div *ngIf="employeeForm.get('firstName')?.touched && employeeForm.get('firstName')?.invalid">Required</div>
+      <input formControlName="firstName" placeholder="Enter first name" title="Employee's first name" />
+      <div class="error" *ngIf="employeeForm.get('firstName')?.invalid && (employeeForm.get('firstName')?.touched || employeeForm.get('firstName')?.dirty)">
+        First name is required.
+      </div>
 
       <label>Last Name</label>
-      <input type="text" formControlName="lastName" placeholder="Enter last name" title="Employee's last name">
-
-      <label>Gender</label>
-      <select formControlName="gender" title="Select gender">
-        <option value="">Select</option>
-        <option>Male</option>
-        <option>Female</option>
-      </select>
+      <input formControlName="lastName" placeholder="Enter last name" title="Employee's last name" />
 
       <label>Email</label>
-      <input type="email" formControlName="email" placeholder="example@domain.com" title="Work email address">
-      <div *ngIf="employeeForm.get('email')?.touched && employeeForm.get('email')?.invalid">Invalid Email</div>
+      <input type="email" formControlName="email" placeholder="example@email.com" title="Valid email address" />
+      <div class="error" *ngIf="employeeForm.get('email')?.invalid && (employeeForm.get('email')?.touched || employeeForm.get('email')?.dirty)">
+        Enter a valid email address.
+      </div>
 
       <label>Phone</label>
-      <input type="text" formControlName="phone" placeholder="10-digit phone" title="Employee contact number">
+      <input formControlName="phone" placeholder="10-digit phone number" title="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]*" inputmode="numeric" />
+      <div class="error" *ngIf="employeeForm.get('phone')?.invalid && (employeeForm.get('phone')?.touched || employeeForm.get('phone')?.dirty)">
+        Enter a valid 10-digit phone number.
+      </div>
     </div>
 
+    <!-- Employment -->
     <div *ngIf="selectedTab === 'employment'">
       <label>Department</label>
-      <input type="text" formControlName="department" placeholder="Enter department" title="e.g. HR, IT">
+      <select formControlName="department" title="Select department">
+        <option value="">Select</option>
+        <option value="IT">IT</option>
+        <option value="HR">HR</option>
+        <option value="Finance">Finance</option>
+      </select>
 
       <label>Job Title</label>
-      <input type="text" formControlName="jobTitle" placeholder="Enter job title" title="e.g. Software Engineer">
+      <select formControlName="jobTitle" title="Select job title">
+        <option value="">Select</option>
+        <option value="Developer">Developer</option>
+        <option value="Tester">Tester</option>
+        <option value="Manager">Manager</option>
+      </select>
+
+      <label>Employment Type</label>
+      <select formControlName="employmentType" title="Select employment type">
+        <option value="">Select</option>
+        <option value="Full-time">Full-time</option>
+        <option value="Part-time">Part-time</option>
+        <option value="Contract">Contract</option>
+      </select>
 
       <label>Hire Date</label>
-      <input type="date" formControlName="hireDate" title="Date of joining">
+      <input formControlName="hireDate" type="date" title="Date of joining" />
+
+      <label>Status</label>
+      <select formControlName="employeeStatus" title="Select employment status">
+        <option value="">Select</option>
+        <option value="Active">Active</option>
+        <option value="On Leave">On Leave</option>
+        <option value="Resigned">Resigned</option>
+      </select>
+
+      <label>Supervisor</label>
+      <input formControlName="supervisor" placeholder="Supervisor name" title="Employee's supervisor name" />
     </div>
 
+    <!-- Compensation -->
     <div *ngIf="selectedTab === 'compensation'">
       <label>Salary</label>
-      <input type="number" formControlName="salary" placeholder="Enter salary" title="Monthly or annual salary">
+      <input type="number" formControlName="salary" placeholder="Enter salary amount" title="Monthly salary" />
 
       <label>Pay Frequency</label>
-      <select formControlName="payFrequency" title="Select pay frequency">
+      <select formControlName="payFrequency" title="Salary frequency">
         <option value="">Select</option>
         <option value="Monthly">Monthly</option>
         <option value="Bi-weekly">Bi-weekly</option>
-        <option value="Weekly">Weekly</option>
       </select>
+
+      <label>Bank Details</label>
+      <input formControlName="bankDetails" placeholder="A/C No, IFSC" title="Bank account info" />
     </div>
 
+    <!-- Address -->
     <div *ngIf="selectedTab === 'address'">
-      <label>Address Line 1</label>
-      <input type="text" formControlName="address1" placeholder="Street address" title="Primary address line">
+      <label>Address 1</label>
+      <input formControlName="address1" placeholder="Street, House No." title="Primary address" />
 
-      <label>Address Line 2</label>
-      <input type="text" formControlName="address2" placeholder="Additional address" title="Optional">
+      <label>Address 2</label>
+      <input formControlName="address2" placeholder="Landmark" title="Additional address details" />
 
       <label>City</label>
-      <input type="text" formControlName="city" placeholder="City" title="City of residence">
+      <input formControlName="city" placeholder="City name" title="City" />
 
       <label>State</label>
-      <input type="text" formControlName="state" placeholder="State" title="State">
+      <input formControlName="state" placeholder="State" title="State" />
 
       <label>Postal Code</label>
-      <input type="text" formControlName="postalCode" placeholder="Postal code" title="PIN or ZIP">
+      <input formControlName="postalCode" placeholder="ZIP or Postal Code" title="Postal code" />
+
+      <label>Country</label>
+      <input formControlName="country" placeholder="Country" title="Country" />
     </div>
 
+    <!-- Other Info -->
     <div *ngIf="selectedTab === 'other'">
       <label>Emergency Contact</label>
-      <input type="text" formControlName="emergencyContact" placeholder="Contact person" title="For emergencies">
+      <input formControlName="emergencyContact" placeholder="Name & Phone" title="Emergency contact person" />
 
       <label>Notes</label>
-      <textarea formControlName="notes" placeholder="Additional notes" title="Remarks or comments"></textarea>
-    </div>
-
-    <div class="actions">
-      <button type="submit" [disabled]="employeeForm.invalid">Save</button>
-      <button type="button" (click)="onCancel()">Cancel</button>
+      <textarea formControlName="notes" placeholder="Any extra notes" title="Optional notes or remarks"></textarea>
     </div>
   </form>
 
-  <!-- Employee Table -->
+  <!-- Employee Table with Checkbox -->
   <table>
     <thead>
       <tr>
-        <th>ID</th><th>Name</th><th>Email</th><th>Actions</th>
+        <th>Select</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let emp of employees; let i = index">
+      <tr *ngFor="let emp of filteredEmployees; let i = index" [class.selected]="i === currentEmployeeIndex">
+        <td>
+          <input
+            type="checkbox"
+            [checked]="i === currentEmployeeIndex"
+            (change)="toggleSelection(i)"
+            title="Select employee to edit/view/delete"
+          />
+        </td>
         <td>{{ emp.employeeId }}</td>
         <td>{{ emp.firstName }} {{ emp.lastName }}</td>
         <td>{{ emp.email }}</td>
-        <td>
-          <button type="button" (click)="onEdit(i)">Edit</button>
-          <button type="button" (click)="onDelete(i)">Delete</button>
-        </td>
+        <td>{{ emp.phone }}</td>
       </tr>
     </tbody>
   </table>
 </div>
+
+<!-- Styles -->
+<style>
+  .container {
+    padding: 20px;
+    font-family: Arial;
+  }
+
+  .header-buttons {
+    margin-bottom: 15px;
+  }
+
+  .header-buttons button {
+    margin-right: 10px;
+  }
+
+  .tabs {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin-bottom: 10px;
+  }
+
+  .tabs li {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+
+  .tabs li.active {
+    background-color: #007bff;
+    color: white;
+  }
+
+  input,
+  select,
+  textarea {
+    display: block;
+    margin-bottom: 10px;
+    padding: 6px;
+    width: 300px;
+  }
+
+  table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  table th,
+  table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+
+  tr.selected {
+    background-color: #e0f7fa;
+  }
+
+  .error {
+    color: red;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+</style>
