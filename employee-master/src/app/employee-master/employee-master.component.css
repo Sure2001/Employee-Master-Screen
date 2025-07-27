@@ -1,0 +1,45 @@
+.container {
+  max-width: 800px;
+  margin: auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.tabs li {
+  padding: 8px 16px;
+  background: #f1f1f1;
+  cursor: pointer;
+}
+
+.tabs .active {
+  background: #007bff;
+  color: white;
+}
+
+input, select, textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 6px;
+}
+
+.actions {
+  margin-top: 15px;
+}
+
+table {
+  width: 100%;
+  margin-top: 30px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: left;
+}

@@ -1,24 +1,20 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { EmployeeMasterComponent } from './employee-master/employee-master.component';
-import { HeaderComponent } from './layout/header/header.component';
-import { FooterComponent } from './layout/footer/footer.component';
+import { AppRoutingModule } from './app-routing.module'; // ✅ Make sure this is imported
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { EmployeeMasterComponent } from './employee-master/employee-master.component'; // Your component
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    EmployeeMasterComponent,
-    HeaderComponent,
-    FooterComponent
+    EmployeeMasterComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,      // ✅ Import this
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
