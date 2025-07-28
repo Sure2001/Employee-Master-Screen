@@ -52,7 +52,20 @@
   text-align: left;
   line-height: 1.4;
 }
+.icon-btn {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
 
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+.icon-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
 /* Responsive layout */
 @media (max-width: 576px) {

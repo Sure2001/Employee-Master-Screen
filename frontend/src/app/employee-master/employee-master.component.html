@@ -1,29 +1,14 @@
 <!-- Header Buttons -->
-<div class="d-flex flex-wrap gap-2 mb-3">
-  <button class="btn icon-btn btn-add" (click)="onAdd()" data-bs-toggle="tooltip" data-bs-placement="top" title="Add New Employee">
-    <i class="bi bi-person-plus-fill"></i>
-  </button>
-
-  <button class="btn icon-btn btn-save" (click)="onSave()" [disabled]="!showForm" data-bs-toggle="tooltip" data-bs-placement="top" title="Save Employee Details">
-    <i class="bi bi-save2-fill"></i>
-  </button>
-
-  <button class="btn icon-btn btn-cancel" (click)="onCancel()" [disabled]="!showForm" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel Changes">
-    <i class="bi bi-x-circle-fill"></i>
-  </button>
-
-  <button class="btn icon-btn btn-edit" (click)="onEditClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Selected Employee">
-    <i class="bi bi-pencil-square"></i>
-  </button>
-
-  <button class="btn icon-btn btn-delete" (click)="onDelete()" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Employee">
-    <i class="bi bi-trash-fill"></i>
-  </button>
-
-  <button class="btn icon-btn btn-view" (click)="onView()" data-bs-toggle="tooltip" data-bs-placement="top" title="View Employee Details">
-    <i class="bi bi-eye-fill"></i>
-  </button>
+<div class="d-flex justify-content-end gap-3 mb-3">
+  <i class="fas fa-plus-circle icon-btn text-primary" (click)="onAdd()" data-bs-toggle="tooltip" title="Add New Employee"></i>
+  <i class="fas fa-check-circle icon-btn text-success" (click)="onSave()" [class.disabled]="!showForm" data-bs-toggle="tooltip" title="Save Employee"></i>
+  <i class="fas fa-times-circle icon-btn text-secondary" (click)="onCancel()" [class.disabled]="!showForm" data-bs-toggle="tooltip" title="Cancel Changes"></i>
+  <i class="fas fa-pen icon-btn text-warning" (click)="onEditClick()" data-bs-toggle="tooltip" title="Edit Employee"></i>
+  <i class="fas fa-user-minus icon-btn text-danger" (click)="onDelete()" data-bs-toggle="tooltip" title="Delete Employee"></i>
+  <i class="fas fa-id-card icon-btn text-info" (click)="onView()" data-bs-toggle="tooltip" title="View Employee Details"></i>
 </div>
+
+
 
 <!-- Show form only if showForm is true -->
 <app-employee-form

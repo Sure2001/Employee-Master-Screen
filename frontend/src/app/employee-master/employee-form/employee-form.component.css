@@ -12,3 +12,22 @@ button.rounded-circle {
 button.rounded-circle:hover {
   transform: scale(1.1);
 }
+.animated-bg-wrapper {
+  background: linear-gradient(-45deg, #e3f2fd, #e8f5e9, #fff3e0, #ede7f6);
+  background-size: 400% 400%;
+  animation: gradientBG 5s ease infinite;
+  border: 1px solid #ccc;
+  margin-bottom: 30px;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

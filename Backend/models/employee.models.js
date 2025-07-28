@@ -1,35 +1,29 @@
+// backend/models/employee.model.js
+
 const mongoose = require('mongoose');
 
-const EmployeeSchema = new mongoose.Schema({
-  employeeId: { type: String, required: true },
+const employeeSchema = new mongoose.Schema({
+  employeeId: { type: String, required: true, unique: true },
   firstName: String,
   lastName: String,
-  dob: Date,
-  gender: String,
-  email: { type: String, required: true },
-  phone: String,
-
   department: String,
-  jobTitle: String,
-  employmentType: String,
+  email: String,
+  phone: String,
   hireDate: Date,
   employeeStatus: String,
-  supervisor: String,
+  confirmationDate: Date,
+  compensation: {
+    salary: Number,
+    bonus: Number
+  },
+  address: {
+    line1: String,
+    line2: String,
+    city: String,
+    state: String,
+    zip: String
+  },
+  otherInfo: String
+}, { timestamps: true });
 
-  salary: Number,
-  payFrequency: String,
-  bankAccount: String,
-
-  address1: String,
-  address2: String,
-  city: String,
-  state: String,
-  postalCode: String,
-  country: String,
-
-  emergencyContactName: String,
-  emergencyContactNumber: String,
-  notes: String
-});
-
-module.exports = mongoose.model('Employee', EmployeeSchema);
+module.exports = mongoose.model('Employee', employeeSchema);
