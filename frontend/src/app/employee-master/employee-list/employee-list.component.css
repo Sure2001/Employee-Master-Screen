@@ -29,3 +29,30 @@ input[type="checkbox"] {
 button.btn i {
   pointer-events: none;
 }
+
+/* Table styling */
+.table thead th {
+  vertical-align: middle;
+}
+
+.table td, .table th {
+  white-space: nowrap;
+}
+
+/* Highlight selected row */
+.table-light.selected {
+  background-color: #cfe2ff !important;
+}
+
+/* Search/Filter field */
+.form-label {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Toast */
+.toast {
+  border-radius: 10px;
+  font-size: 0.95rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}

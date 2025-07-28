@@ -40,20 +40,24 @@
     <thead class="table-dark">
       <tr>
         <th>
-          <input type="checkbox" (change)="toggleSelectAll($event)" [checked]="selectAll" />
-        </th>
-        <th>Employee ID</th>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Gender</th>
-        <th>Email</th>
-        <th>Department</th>
-        <th>Hire Date</th> <!-- ✅ Added -->
-        <th>Status</th>     <!-- ✅ Added -->
+  <input type="checkbox" (change)="toggleSelectAll($event)" [checked]="selectAll" />
+</th>
+<th><i class="bi bi-person-badge"></i> Employee ID</th>
+<th><i class="bi bi-person-lines-fill"></i> Employee Name</th>
+<th><i class="bi bi-telephone-fill"></i> Phone</th>
+<th><i class="bi bi-gender-ambiguous"></i> Gender</th>
+<th><i class="bi bi-envelope-fill"></i> Email</th>
+<th><i class="bi bi-building"></i> Department</th>
+<th><i class="bi bi-calendar-event-fill"></i> Hire Date</th>
+<th><i class="bi bi-activity"></i> Status</th>
+    
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let emp of paginatedEmployees" class="table-light">
+      <tr *ngFor="let emp of paginatedEmployees"
+    class="table-light"
+    [class.selected]="selectedEmployees.includes(emp)">
+
         <td>
           <input type="checkbox"
                  [checked]="selectedEmployees.includes(emp)"
@@ -65,8 +69,8 @@
         <td>{{ emp.gender | titlecase }}</td>
         <td>{{ emp.email | lowercase }}</td>
         <td>{{ emp.department | uppercase }}</td>
-        <td>{{ emp.hireDate | date: 'dd-MM-yyyy' }}</td> <!-- ✅ Added -->
-        <td>{{ emp.employeeStatus | titlecase }}</td>                 <!-- ✅ Added -->
+        <td>{{ emp.hireDate | date: 'dd-MM-yyyy' }}</td>
+        <td>{{ emp.employeeStatus | titlecase }}</td>
       </tr>
     </tbody>
   </table>
@@ -87,7 +91,7 @@
 </div>
 
 
-<!-- 🧨 Delete Confirmation Modal -->
+<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-danger">
@@ -106,7 +110,7 @@
   </div>
 </div>
 
-<!-- ✅ Toast Notification (Centered) -->
+<!-- Toast Notification (Centered) -->
 <div class="position-fixed top-50 start-50 translate-middle p-3" style="z-index: 1100;">
   <div *ngIf="toastMessage" class="toast show text-white px-3 py-2" 
        [ngClass]="{

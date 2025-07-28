@@ -67,6 +67,10 @@
   pointer-events: none;
 }
 
+
+
+
+
 /* Responsive layout */
 @media (max-width: 576px) {
   .icon-btn {
