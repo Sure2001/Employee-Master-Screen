@@ -1,40 +1,24 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Employee = require('./models/employee');
+const employeeRoutes = require('./routes/employee.routes');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+const PORT = 3000;
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/employees', {
+// MongoDB connection
+mongoose.connect('mongodb://localhost:27017/employee-master', {
   useNewUrlParser: true,
   useUnifiedTopology: true
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => console.error(err));
 
-// Routes
-app.get('/api/employees', async (req, res) => {
-  const employees = await Employee.find();
-  res.json(employees);
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use('/api/employees', employeeRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
-
-app.post('/api/employees', async (req, res) => {
-  const newEmployee = new Employee(req.body);
-  await newEmployee.save();
-  res.status(201).json(newEmployee);
-});
-
-app.put('/api/employees/:id', async (req, res) => {
-  const updated = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updated);
-});
-
-app.delete('/api/employees/:id', async (req, res) => {
-  await Employee.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Employee deleted' });
-});
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

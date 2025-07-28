@@ -1,0 +1,48 @@
+<!-- employee-list.component.html -->
+<div class="table-responsive shadow rounded">
+  <table class="table table-bordered table-hover text-center align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>
+          <input type="checkbox" (change)="toggleSelectAll($event)" [checked]="selectAll" />
+        </th>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Gender</th>
+        <th>Email</th>
+        <th>Department</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of paginatedEmployees" class="table-light">
+        <td>
+          <input type="checkbox"
+                 [checked]="selectedEmployees.includes(emp)"
+                 (change)="toggleRowSelection(emp, $event)" />
+        </td>
+        <td>{{ emp.employeeId }}</td>
+        <td>{{ emp.firstName }} {{ emp.lastName }}</td>
+        <td>{{ emp.phone }}</td>
+        <td>{{ emp.gender }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.department }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination controls -->
+<div class="d-flex justify-content-center align-items-center gap-4 mt-3">
+  <button class="btn btn-outline-primary rounded-circle" (click)="prevPage()" [disabled]="currentPage === 1">
+    <i class="bi bi-arrow-left-circle-fill fs-4"></i>
+  </button>
+
+  <span class="fw-bold fs-6">Page {{ currentPage }} of {{ totalPages }}</span>
+
+  <button class="btn btn-outline-primary rounded-circle" (click)="nextPage()" [disabled]="currentPage === totalPages">
+    <i class="bi bi-arrow-right-circle-fill fs-4"></i>
+  </button>
+</div>
+
+
