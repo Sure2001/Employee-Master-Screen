@@ -1,37 +1,69 @@
 # 👩‍💼 Employee Master Screen – Angular + Node.js + MongoDB
 
-This is a full-stack Employee Master Management System built for professional HR operations.
+A full-stack Employee Master Management System to manage employee data with role-based access, forms, modals, search, animated UI, and a connected MongoDB backend.
 
 ---
 
-## 🚀 Features
+## 🚀 Tech Stack
+
+| Layer      | Technology          |
+|------------|---------------------|
+| Frontend   | Angular 14, Bootstrap 5, Icons |
+| Backend    | Node.js, Express.js |
+| Database   | MongoDB             |
+| Styling    | Bootstrap + CSS     |
+| Forms      | Reactive Forms      |
+
+---
+
+## 🎯 Features
 
 - 🧾 Add / Edit / View / Delete employees
-- 🔍 Smart search by ID or Name
-- 🏢 Filter by department, status, and hire date
-- 📋 Grouped tabs in form:
+- 📋 Multi-tab forms:
   - Personal Info
   - Employment Details
   - Compensation
   - Address
   - Other Info
-- ✅ Reactive Form validations with tooltips
-- 🔐 Role-based access (HR Admin / Manager)
-- 🗃️ Pagination with icons
-- 🧭 View/Edit/Delete via top toolbar
-- 🌈 Animated gradient background + icon buttons
-- 📦 Toast notifications & delete confirmation modal
+- 🔍 Search and filter by name, department, or hire date
+- ✅ Validations with animated tooltips
+- 🔐 Role-based access (HR Admin, Manager)
+- 📦 Toast notifications & confirmation modals
+- 📱 Responsive layout
+- 🌈 Animated background with floating shapes
 
 ---
 
-## 🧑‍💻 Tech Stack
+## 📁 Project Structure
 
-| Frontend     | Backend            | Database | Styling & Extras                            |
-|--------------|--------------------|----------|---------------------------------------------|
-| Angular 14   | Node.js + Express  | MongoDB  | Bootstrap 5, Bootstrap Icons, Reactive Forms |
 
 ---
 
-## 📂 Project Structure
+## ⚙️ Installation & Running via CLI
+
+### 🔧 Backend Setup
+
+```bash
+# Navigate to backend
+cd backend
+
+# Install dependencies
+npm install
+
+# Run backend server (on port 3000)
+node server.js
+
+# Navigate to frontend
+cd ../frontend
+
+# Install Angular dependencies
+npm install
+
+# Run Angular development server
+ng serve
 
 
+| Layer    | Folder      | Start Command    | URL                                            |
+| -------- | ----------- | ---------------- | ---------------------------------------------- |
+| Backend  | `/backend`  | `node server.js` | [http://localhost:3000](http://localhost:3000) |
+| Frontend | `/frontend` | `ng serve`       | [http://localhost:4200](http://localhost:4200) |
