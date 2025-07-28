@@ -26,8 +26,7 @@ A full-stack Employee Master Management System to manage employee data with role
   - Address
   - Other Info
 - 🔍 Search and filter by name, department, or hire date
-- ✅ Validations with animated tooltips
-- 🔐 Role-based access (HR Admin, Manager)
+- ✅ Validations with animated tooltip
 - 📦 Toast notifications & confirmation modals
 - 📱 Responsive layout
 - 🌈 Animated background with floating shapes
