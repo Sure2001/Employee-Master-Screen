@@ -1,7 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmployeeService } from 'src/app/services/employee.service';
 import { Employee } from 'src/app/models/employee';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-employee-form',
@@ -9,12 +11,16 @@ import { Employee } from 'src/app/models/employee';
   styleUrls: ['./employee-form.component.css']
 })
 export class EmployeeFormComponent implements OnInit {
-@Output() formSaved = new EventEmitter<Employee>();
-// ✅ Emits the saved/updated employee
-
+  @Output() formSaved = new EventEmitter<Employee>();
   employeeForm!: FormGroup;
   isEditMode: boolean = false;
   currentId: string = '';
+
+  // Toast controls
+  toastMessage: string = '';
+toastType: 'success' | 'danger' | 'warning' = 'success'; // ✅ fixed
+@ViewChild('toastRef') toastRef!: ElementRef;
+
 
   constructor(private fb: FormBuilder, private employeeService: EmployeeService) {}
 
@@ -22,10 +28,9 @@ export class EmployeeFormComponent implements OnInit {
     this.initForm();
   }
 
-  // Initialize form
   initForm(): void {
     this.employeeForm = this.fb.group({
-      _id: [''], // Required for update
+      _id: [''],
       employeeId: ['', Validators.required],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -34,15 +39,15 @@ export class EmployeeFormComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
 
-     department: ['', Validators.required],
-  jobTitle: ['', Validators.required],
-  employmentType: ['', Validators.required],
+      department: ['', Validators.required],
+      jobTitle: ['', Validators.required],
+      employmentType: ['', Validators.required],
       hireDate: [''],
-       employeeStatus: ['', Validators.required],
+      employeeStatus: ['', Validators.required],
       supervisor: [''],
 
       salary: [],
-        payFrequency: ['', Validators.required],
+      payFrequency: ['', Validators.required],
       bankAccount: [''],
 
       address1: [''],
@@ -58,56 +63,58 @@ export class EmployeeFormComponent implements OnInit {
     });
   }
 
-  // Called on Save button
- onSubmit(): void {
-  if (this.employeeForm.valid) {
-    const empData: Employee = this.employeeForm.value;
+  showToast(message: string, type: 'success' | 'danger') {
+    this.toastMessage = message;
+    this.toastType = type;
 
-    if (this.isEditMode && this.currentId) {
-      // 🔁 Edit mode
-      this.employeeService.updateEmployee(this.currentId, empData).subscribe({
-        next: () => {
-          alert('Employee updated successfully!');
-          this.resetForm();
-          this.formSaved.emit(empData); // ✅ Fixed
-        },
-        error: (err) => {
-          console.error('Error updating employee:', err);
-          alert('Error updating employee.');
-        }
-      });
-    } else {
-      // ➕ Add mode
-      const { _id, ...newEmp } = empData;
-
-      this.employeeService.addEmployee(newEmp as Employee).subscribe({
-        next: (savedEmp) => {
-          alert('Employee added successfully!');
-          this.resetForm();
-          this.formSaved.emit(savedEmp); // ✅ Fixed
-        },
-        error: (err) => {
-          console.error('Error adding employee:', err);
-          alert('Error occurred!');
-        }
-      });
-    }
-  } else {
-    alert('Please fill all required fields!');
+    const toastElement = this.toastRef.nativeElement;
+    const bsToast = new bootstrap.Toast(toastElement);
+    bsToast.show();
   }
-}
 
+  onSubmit(): void {
+    if (this.employeeForm.valid) {
+      const empData: Employee = this.employeeForm.value;
 
-maxDate = new Date().toISOString().split('T')[0]; // Prevent future DOB
+      if (this.isEditMode && this.currentId) {
+        this.employeeService.updateEmployee(this.currentId, empData).subscribe({
+          next: () => {
+            this.showToast('Employee updated successfully!', 'success');
+            this.resetForm();
+            this.formSaved.emit(empData);
+          },
+          error: (err) => {
+            console.error('Error updating employee:', err);
+            this.showToast('Error updating employee.', 'danger');
+          }
+        });
+      } else {
+        const { _id, ...newEmp } = empData;
+        this.employeeService.addEmployee(newEmp as Employee).subscribe({
+          next: (savedEmp) => {
+            this.showToast('Employee added successfully!', 'success');
+            this.resetForm();
+            this.formSaved.emit(savedEmp);
+          },
+          error: (err) => {
+            console.error('Error adding employee:', err);
+            this.showToast('Error occurred while adding employee.', 'danger');
+          }
+        });
+      }
+    } else {
+      this.showToast('Please fill all required fields!', 'danger');
+    }
+  }
 
-  // Set form in edit mode with values
+  maxDate = new Date().toISOString().split('T')[0];
+
   editEmployee(emp: Employee): void {
     this.employeeForm.patchValue(emp);
     this.currentId = emp._id!;
     this.isEditMode = true;
   }
 
-  // Reset form
   resetForm(): void {
     this.employeeForm.reset();
     this.isEditMode = false;

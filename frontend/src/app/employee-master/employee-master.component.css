@@ -46,6 +46,13 @@
   background-color: #0dcaf0;
   color: #212529;
 }
+.toast {
+  font-size: 1.05rem;
+  min-width: 320px;
+  text-align: left;
+  line-height: 1.4;
+}
+
 
 /* Responsive layout */
 @media (max-width: 576px) {

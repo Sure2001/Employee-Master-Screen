@@ -25,10 +25,7 @@
   </button>
 </div>
 
-
-
-
-<!-- ✅ Show form only if showForm is true -->
+<!-- Show form only if showForm is true -->
 <app-employee-form
   *ngIf="showForm"
   (formSaved)="onEmployeeSaved($event)"
@@ -38,3 +35,19 @@
 <app-employee-list
   (selectedEmployeeChange)="onEmployeeSelected($event)"
 ></app-employee-list>
+
+
+<!-- Toast Popup (center screen) -->
+<div *ngIf="showToast" class="position-fixed top-50 start-50 translate-middle z-3">
+  <div class="toast show text-white px-4 py-3 rounded shadow"
+       [ngClass]="{
+         'bg-success': toastType === 'success',
+         'bg-danger': toastType === 'danger',
+         'bg-warning': toastType === 'warning',
+         'bg-info': toastType === 'info'
+       }">
+    <div [innerHTML]="isHtmlToast ? toastMessage : ''"></div>
+    <div *ngIf="!isHtmlToast">{{ toastMessage }}</div>
+  </div>
+</div>
+
