@@ -9,10 +9,11 @@
     <label class="form-label">Filter by Department</label>
     <select class="form-select" [(ngModel)]="filterDepartment" (change)="onFilterChange()">
       <option value="">All</option>
-      <option>HR</option>
-      <option>IT</option>
-      <option>Finance</option>
-      <option>Operations</option>
+      <option >HR</option>
+      <option >Finance</option>
+      <option >IT</option>
+      <option >Marketing</option>
+      <option >Operations</option>
     </select>
   </div>
 
@@ -20,9 +21,11 @@
     <label class="form-label">Filter by Status</label>
     <select class="form-select" [(ngModel)]="filterStatus" (change)="onFilterChange()">
       <option value="">All</option>
-      <option>Active</option>
-      <option>Inactive</option>
-      <option>Probation</option>
+      <option >Active</option>
+      <option >Inactive</option>
+      <option >On Leave</option>
+      <option >Resigned</option>
+      <option >Terminated</option>
     </select>
   </div>
 
@@ -62,7 +65,7 @@
         <td>{{ emp.phone | titlecase }}</td>
         <td>{{ emp.gender | titlecase }}</td>
         <td>{{ emp.email | lowercase }}</td>
-        <td>{{ emp.department | titlecase }}</td>
+        <td>{{ emp.department | uppercase }}</td>
         <td>{{ emp.hireDate | date: 'dd-MM-yyyy' }}</td> <!-- ✅ Added -->
         <td>{{ emp.employeeStatus | titlecase }}</td>                 <!-- ✅ Added -->
       </tr>
